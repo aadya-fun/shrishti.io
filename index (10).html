@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Happy Birthday, Shrishti 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,600;1,500;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF5EC;
+    --paper:#FFFCF7;
+    --maroon:#8A2E36;
+    --maroon-deep:#5E1F26;
+    --blush:#F3D6D6;
+    --sage:#9FB08C;
+    --gold:#C9A34E;
+    --dusk:#8B9DC3;
+    --ink:#3B2B2C;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%; overflow:hidden;
+    background:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    color:var(--ink);
+    -webkit-tap-highlight-color:transparent;
+  }
+  #stage{
+    position:relative; width:100%; height:100vh; height:100dvh;
+    overflow:hidden;
+  }
+  .scene{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:8vh 6vw;
+    opacity:0; pointer-events:none;
+    transform:translateY(14px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .scene.active{ opacity:1; pointer-events:auto; transform:translateY(0); }
+
+  .eyebrow{
+    font-family:'Caveat', cursive; font-size:1.35rem; color:var(--maroon);
+    letter-spacing:.02em; margin:0 0 .3rem 0;
+  }
+  h1.title{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.6rem, 6vw, 2.6rem); color:var(--maroon-deep);
+    margin:0 0 .6rem 0; line-height:1.2;
+  }
+  .sub{
+    font-size:clamp(1rem, 3.2vw, 1.2rem); color:#6b5657; margin:0 0 2rem 0;
+  }
+
+  button.continue{
+    margin-top:2.2rem; border:none; background:var(--maroon-deep); color:var(--paper);
+    font-family:'Cormorant Garamond', serif; font-size:1.05rem; letter-spacing:.03em;
+    padding:.7rem 1.7rem; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 18px rgba(94,31,38,.25);
+    opacity:0; transform:translateY(8px);
+    transition:opacity .5s ease, transform .5s ease, background .2s ease;
+  }
+  button.continue.show{ opacity:1; transform:translateY(0); }
+  button.continue:hover{ background:var(--maroon); }
+
+  /* ---------- SCENE 0: intro ---------- */
+  #scene-intro .heart-mark{ font-size:2rem; margin-bottom:.6rem; }
+  #scene-intro h1{ font-size:clamp(1.9rem,7vw,3rem); }
+  #scene-intro .tap-hint{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--maroon); margin-top:2.4rem; animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+
+  /* ---------- SCENE 1: balloons ---------- */
+  .balloon-row{ display:flex; gap:5vw; margin:2.2rem 0 1rem 0; }
+  .balloon{
+    width:15vw; max-width:78px; min-width:52px; cursor:pointer;
+    transition:transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+    animation:bob 3.2s ease-in-out infinite;
+  }
+  .balloon:nth-child(2){ animation-delay:.4s; }
+  .balloon:nth-child(3){ animation-delay:.8s; }
+  .balloon:nth-child(4){ animation-delay:1.2s; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+  .balloon.popped{ opacity:0; transform:scale(1.7); pointer-events:none; animation:none; }
+  .word-row{ display:flex; gap:1.2rem; min-height:2.6rem; align-items:flex-end; }
+  .word{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:600;
+    font-size:clamp(1.3rem,5vw,2rem); color:var(--maroon-deep);
+    opacity:0; transform:translateY(10px) scale(.8);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .word.shown{ opacity:1; transform:translateY(0) scale(1); }
+
+  /* ---------- SCENE 2: candle ---------- */
+  .cake-wrap{ cursor:pointer; user-select:none; margin-top:1rem; }
+  .flame{ transform-origin:50% 90%; animation:flicker 1.6s ease-in-out infinite; }
+  @keyframes flicker{ 0%,100%{ transform:scaleY(1) rotate(-2deg);} 50%{ transform:scaleY(1.12) rotate(3deg);} }
+  .flame.out{ animation:none; opacity:0; transition:opacity .5s ease; }
+  .smoke{ opacity:0; }
+  .smoke.show{ animation:smoke-rise 1.6s ease-out forwards; }
+  @keyframes smoke-rise{ 0%{ opacity:.55; transform:translateY(0) scaleX(1);} 100%{ opacity:0; transform:translateY(-26px) scaleX(1.8);} }
+  .wish-text{
+    font-family:'Caveat', cursive; font-size:1.5rem; color:var(--maroon);
+    opacity:0; margin-top:1.4rem; transition:opacity .8s ease;
+  }
+  .wish-text.show{ opacity:1; }
+  .tap-hint-sm{ font-family:'Caveat', cursive; font-size:1.05rem; color:#a17b7b; margin-top:.6rem; }
+
+  /* ---------- SCENE 3: bouquet ---------- */
+  .bouquet-wrap{ opacity:0; transform:scale(.85); transition:opacity .9s ease, transform .9s ease; }
+  .bouquet-wrap.show{ opacity:1; transform:scale(1); }
+
+  /* ---------- SCENE 4: photo cards ---------- */
+  .card-stack{ position:relative; width:min(62vw,240px); height:min(78vw,320px); margin:1.6rem 0 .8rem 0; }
+  .polaroid{
+    position:absolute; inset:0; background:var(--paper); border-radius:6px;
+    box-shadow:0 10px 26px rgba(59,43,44,.2); padding:10px 10px 42px 10px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:grab; transition:transform .45s cubic-bezier(.34,1.1,.64,1), opacity .45s ease;
+  }
+  .polaroid img{ width:100%; height:100%; object-fit:cover; border-radius:2px; }
+  .polaroid .cap{
+    position:absolute; bottom:8px; left:0; right:0; text-align:center;
+    font-family:'Caveat', cursive; font-size:1.15rem; color:var(--maroon-deep);
+  }
+  .polaroid.leaving{ transform:translateX(120%) rotate(18deg) !important; opacity:0; }
+  .card-hint{ font-family:'Caveat', cursive; font-size:1.05rem; color:#a17b7b; }
+  .dots{ display:flex; gap:.4rem; margin-top:.9rem; }
+  .dot{ width:6px; height:6px; border-radius:50%; background:#e3cccc; }
+  .dot.done{ background:var(--maroon); }
+
+  /* ---------- SCENE 5: letter ---------- */
+  .envelope{ cursor:pointer; }
+  .envelope-svg{ transition:transform .3s ease; }
+  .envelope.opened .flap{ transform:rotateX(180deg); }
+  .flap{ transform-origin:50% 0%; transition:transform .6s cubic-bezier(.3,.6,.3,1); transform-style:preserve-3d; }
+  .letter-card{
+    background:var(--paper); border-radius:8px; padding:1.6rem 1.6rem 1.3rem 1.6rem;
+    max-width:min(84vw,380px); box-shadow:0 14px 34px rgba(59,43,44,.22);
+    font-family:'Cormorant Garamond', serif; font-size:1.08rem; line-height:1.6; color:var(--ink);
+    text-align:left; opacity:0; transform:translateY(24px) scale(.96);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+  .letter-card.show{ opacity:1; transform:translateY(0) scale(1); }
+  .letter-card .sign{ font-family:'Caveat', cursive; font-size:1.5rem; color:var(--maroon); margin-top:.6rem; display:block; }
+
+  /* ---------- SCENE 6: gift ---------- */
+  .gift-wrap{ cursor:pointer; }
+  .gift-lid{ transform-origin:20% 100%; transition:transform .55s cubic-bezier(.3,1.4,.4,1); }
+  .gift-wrap.open .gift-lid{ transform:translateY(-14px) rotate(-24deg); }
+  .gift-wrap.open .gift-sparkle{ animation:pop-sparkle .7s ease-out forwards; }
+  @keyframes pop-sparkle{ 0%{opacity:0; transform:scale(.2);} 60%{opacity:1; transform:scale(1.15);} 100%{opacity:0; transform:scale(1.4);} }
+
+  /* ---------- SCENE 7: finale ---------- */
+  #scene-finale h1{ font-size:clamp(1.7rem,6vw,2.7rem); }
+  .chibi{ font-size:2.6rem; margin-bottom:.6rem; }
+  .finale-msg{ max-width:min(86vw,420px); font-size:1.1rem; line-height:1.6; color:#6b5657; }
+  .replay{
+    margin-top:1.6rem; background:none; border:1px solid var(--maroon-deep); color:var(--maroon-deep);
+    font-family:'Cormorant Garamond', serif; font-size:.95rem; padding:.55rem 1.4rem; border-radius:999px; cursor:pointer;
+  }
+  #confetti-canvas{ position:fixed; inset:0; pointer-events:none; z-index:5; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.15s !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="stage">
+
+  <!-- SCENE 0 — INTRO -->
+  <section class="scene active" id="scene-intro" data-scene="0">
+    <div class="heart-mark">🤎</div>
+    <p class="eyebrow">a little something for</p>
+    <h1 class="title">Shrishti</h1>
+    <p class="sub">made with love, just for you</p>
+    <div class="tap-hint">tap anywhere to begin ✨</div>
+  </section>
+
+  <!-- SCENE 1 — BALLOONS -->
+  <section class="scene" id="scene-balloons" data-scene="1">
+    <h1 class="title">Pop all 4 balloons</h1>
+    <div class="balloon-row" id="balloon-row"></div>
+    <div class="word-row" id="word-row"></div>
+  </section>
+
+  <!-- SCENE 2 — CANDLE -->
+  <section class="scene" id="scene-candle" data-scene="2">
+    <h1 class="title">Blow the candle, Shrishti</h1>
+    <div class="cake-wrap" id="cake-wrap">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <ellipse cx="75" cy="118" rx="52" ry="12" fill="var(--blush)" opacity=".5"/>
+        <path d="M28 100 Q75 82 122 100 L118 130 Q75 145 32 130 Z" fill="#6b3a2e"/>
+        <path d="M28 100 Q75 112 122 100 L122 108 Q75 120 28 108 Z" fill="#fff" opacity=".9"/>
+        <path d="M30 88 Q75 74 120 88 L120 100 Q75 114 30 100 Z" fill="#fff"/>
+        <rect x="72" y="58" width="6" height="26" rx="2" fill="#8A2E36"/>
+        <g class="smoke" id="smoke">
+          <path d="M75 56 Q68 46 76 40" stroke="#bbb" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </g>
+        <g class="flame" id="flame">
+          <path d="M75 34 C70 42 70 50 75 56 C80 50 80 42 75 34 Z" fill="#F2A93B"/>
+          <path d="M75 42 C72 46 72 50 75 54 C78 50 78 46 75 42 Z" fill="#F2532B"/>
+        </g>
+      </svg>
+    </div>
+    <div class="tap-hint-sm" id="candle-hint">tap the flame to blow it out</div>
+    <div class="wish-text" id="wish-text">close your eyes &amp; make a wish 🤍</div>
+  </section>
+
+  <!-- SCENE 3 — BOUQUET -->
+  <section class="scene" id="scene-bouquet" data-scene="3">
+    <h1 class="title">Your Rose Bouquet 🌹</h1>
+    <div class="bouquet-wrap" id="bouquet-wrap">
+      <svg width="160" height="170" viewBox="0 0 160 170">
+        <path d="M80 170 L60 100 L100 100 Z" fill="#E7B7A0"/>
+        <path d="M60 100 L100 100 L96 84 L64 84 Z" fill="#c9946f"/>
+        <g>
+          <circle cx="60" cy="55" r="16" fill="#B23A48"/>
+          <circle cx="82" cy="42" r="18" fill="#8A2E36"/>
+          <circle cx="104" cy="55" r="16" fill="#B23A48"/>
+          <circle cx="71" cy="66" r="14" fill="#C9525F"/>
+          <circle cx="93" cy="66" r="14" fill="#C9525F"/>
+          <path d="M40 70 Q30 50 44 34" stroke="#6d8f5b" stroke-width="4" fill="none"/>
+          <path d="M120 70 Q130 50 116 34" stroke="#6d8f5b" stroke-width="4" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <button class="continue" id="btn-bouquet-continue">Continue →</button>
+  </section>
+
+  <!-- SCENE 4 — PHOTO CARDS -->
+  <section class="scene" id="scene-photos" data-scene="4">
+    <h1 class="title">Some Sweet Moments</h1>
+    <p class="card-hint" id="card-hint">swipe the cards →</p>
+    <div class="card-stack" id="card-stack"></div>
+    <div class="dots" id="dots"></div>
+    <button class="continue" id="btn-photos-continue">Continue →</button>
+  </section>
+
+  <!-- SCENE 5 — LETTER -->
+  <section class="scene" id="scene-letter" data-scene="5">
+    <h1 class="title">A Message From My Heart</h1>
+    <p class="sub" id="envelope-hint">tap the envelope to open</p>
+    <div class="envelope" id="envelope">
+      <svg class="envelope-svg" width="150" height="100" viewBox="0 0 150 100">
+        <rect x="5" y="20" width="140" height="75" rx="6" fill="#F6E7C9" stroke="#C9A34E" stroke-width="2"/>
+        <path d="M5 22 L75 68 L145 22" stroke="#C9A34E" stroke-width="2" fill="none"/>
+        <polygon class="flap" points="5,22 145,22 75,68" fill="#F0DCA6" stroke="#C9A34E" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="letter-card" id="letter-card">
+      <div>Dear Shrishti,</div>
+      <br>
+      <div id="letter-body">Happy birthday to the person who makes every plan better just by being in it. Thank you for every late-night call, every ridiculous inside joke, and every time you showed up without me even having to ask. Here's to another year of us being absolutely unstoppable together.</div>
+      <span class="sign">— always your Shrishti person 🤍</span>
+    </div>
+    <button class="continue" id="btn-letter-continue">Continue →</button>
+  </section>
+
+  <!-- SCENE 6 — GIFT -->
+  <section class="scene" id="scene-gift" data-scene="6">
+    <h1 class="title">One Last Thing...</h1>
+    <p class="sub" id="gift-hint">tap the gift</p>
+    <div class="gift-wrap" id="gift-wrap">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <rect x="30" y="66" width="80" height="56" rx="4" fill="#8A2E36"/>
+        <rect x="30" y="66" width="80" height="10" fill="#C9A34E"/>
+        <rect x="65" y="66" width="10" height="56" fill="#C9A34E"/>
+        <g class="gift-lid">
+          <rect x="24" y="50" width="92" height="20" rx="4" fill="#B23A48"/>
+          <path d="M70 50 C50 30 40 50 55 55 C40 60 60 70 70 50 Z" fill="#C9A34E"/>
+          <path d="M70 50 C90 30 100 50 85 55 C100 60 80 70 70 50 Z" fill="#C9A34E"/>
+        </g>
+        <g class="gift-sparkle" opacity="0">
+          <circle cx="70" cy="40" r="3" fill="#F2A93B"/>
+          <circle cx="50" cy="30" r="2" fill="#F2A93B"/>
+          <circle cx="92" cy="30" r="2" fill="#F2A93B"/>
+        </g>
+      </svg>
+    </div>
+    <button class="continue" id="btn-gift-continue">Continue →</button>
+  </section>
+
+  <!-- SCENE 7 — FINALE -->
+  <section class="scene" id="scene-finale" data-scene="7">
+    <div class="chibi">🐻🎁🐰</div>
+    <h1 class="title">Lots of love for you ❤</h1>
+    <p class="finale-msg">Once again, happy birthday, Shrishti! I hope this made you smile even half as much as you make me smile every single day. Here's to celebrating you — today and always.</p>
+    <button class="replay" id="btn-replay">↻ Replay</button>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============ EDIT THIS TO CUSTOMIZE ============ */
+  const CONFIG = {
+    name: "Shrishti",
+    balloonWords: ["You", "are", "so", "special"],
+    photos: ["shrishti1.jpg","shrishti2.jpg","shrishti3.jpg","shrishti4.jpg","shrishti5.jpg"],
+    balloonColors: ["#9FB08C","#F3D6D6","#C9A34E","#8B9DC3"]
+  };
+  /* ================================================= */
+
+  const scenes = Array.from(document.querySelectorAll(".scene"));
+  let current = 0;
+
+  function goTo(index){
+    if(index < 0 || index >= scenes.length) return;
+    scenes[current].classList.remove("active");
+    current = index;
+    scenes[current].classList.add("active");
+    if(current === 7) launchFinaleConfetti();
+  }
+  function next(){ goTo(current + 1); }
+
+  /* ---- Scene 0: intro ---- */
+  document.getElementById("scene-intro").addEventListener("click", next, {once:true});
+
+  /* ---- Scene 1: balloons ---- */
+  const balloonRow = document.getElementById("balloon-row");
+  const wordRow = document.getElementById("word-row");
+  let poppedCount = 0;
+
+  CONFIG.balloonWords.forEach((word, i) => {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.innerHTML = `
+      <svg viewBox="0 0 60 76" width="100%">
+        <ellipse cx="30" cy="30" rx="27" ry="30" fill="${CONFIG.balloonColors[i % CONFIG.balloonColors.length]}"/>
+        <ellipse cx="21" cy="18" rx="7" ry="10" fill="#ffffff" opacity=".35"/>
+        <path d="M30 60 L26 66 L34 66 Z" fill="${CONFIG.balloonColors[i % CONFIG.balloonColors.length]}"/>
+        <path d="M30 66 Q26 72 30 76 Q34 72 30 66" stroke="#9a8a7d" stroke-width="1.5" fill="none"/>
+      </svg>`;
+    b.addEventListener("click", () => popBalloon(b, word, i), {once:true});
+    balloonRow.appendChild(b);
+
+    const w = document.createElement("span");
+    w.className = "word";
+    w.textContent = word;
+    w.id = "word-" + i;
+    wordRow.appendChild(w);
+  });
+
+  function popBalloon(el, word, i){
+    el.classList.add("popped");
+    document.getElementById("word-" + i).classList.add("shown");
+    poppedCount++;
+    if(window.confetti){
+      const rect = el.getBoundingClientRect();
+      confetti({
+        particleCount: 26, spread: 55, startVelocity: 22, gravity: 1,
+        origin: { x: (rect.left + rect.width/2)/window.innerWidth, y: (rect.top + rect.height/2)/window.innerHeight },
+        colors: [CONFIG.balloonColors[i % CONFIG.balloonColors.length], "#C9A34E", "#ffffff"]
+      });
+    }
+    if(poppedCount === CONFIG.balloonWords.length){
+      setTimeout(next, 1100);
+    }
+  }
+
+  /* ---- Scene 2: candle ---- */
+  const cakeWrap = document.getElementById("cake-wrap");
+  const flame = document.getElementById("flame");
+  const smoke = document.getElementById("smoke");
+  const wishText = document.getElementById("wish-text");
+  const candleHint = document.getElementById("candle-hint");
+  let blown = false;
+
+  cakeWrap.addEventListener("click", () => {
+    if(blown) return;
+    blown = true;
+    flame.classList.add("out");
+    smoke.classList.add("show");
+    candleHint.style.opacity = 0;
+    setTimeout(() => wishText.classList.add("show"), 300);
+    setTimeout(next, 2200);
+  });
+
+  /* ---- Scene 3: bouquet ---- */
+  document.getElementById("scene-bouquet").addEventListener("transitionend", function handler(e){
+    if(this.classList.contains("active")){
+      document.getElementById("bouquet-wrap").classList.add("show");
+    }
+  });
+  // also trigger on direct arrival (in case transitionend missed)
+  const bouquetObserver = new MutationObserver(() => {
+    if(document.getElementById("scene-bouquet").classList.contains("active")){
+      document.getElementById("bouquet-wrap").classList.add("show");
+    }
+  });
+  bouquetObserver.observe(document.getElementById("scene-bouquet"), {attributes:true});
+  document.getElementById("btn-bouquet-continue").addEventListener("click", next);
+  setTimeout(() => document.getElementById("btn-bouquet-continue").classList.add("show"), 1200);
+
+  /* ---- Scene 4: photo cards ---- */
+  const cardStack = document.getElementById("card-stack");
+  const dotsWrap = document.getElementById("dots");
+  const cardHint = document.getElementById("card-hint");
+  const btnPhotosContinue = document.getElementById("btn-photos-continue");
+  let cardIndex = 0;
+  const rotations = [-6, 4, -3, 5, -4];
+
+  CONFIG.photos.forEach((src, i) => {
+    const card = document.createElement("div");
+    card.className = "polaroid";
+    card.style.zIndex = CONFIG.photos.length - i;
+    card.style.transform = `rotate(${rotations[i % rotations.length]}deg)`;
+    card.innerHTML = `<img src="${src}" alt="Shrishti memory ${i+1}" onerror="this.parentElement.style.display='flex'; this.style.display='none';">
+      <div class="cap">Happy Birthday! 🎂</div>`;
+    cardStack.appendChild(card);
+
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    dotsWrap.appendChild(dot);
+  });
+  document.querySelectorAll(".dot")[0].classList.add("done");
+
+  function advanceCard(){
+    const cards = cardStack.querySelectorAll(".polaroid");
+    if(cardIndex >= cards.length - 1){
+      cardHint.textContent = "that's all of them 🤍";
+      btnPhotosContinue.classList.add("show");
+      return;
+    }
+    cards[cardIndex].classList.add("leaving");
+    cardIndex++;
+    document.querySelectorAll(".dot")[cardIndex].classList.add("done");
+    if(cardIndex === cards.length - 1){
+      cardHint.textContent = "tap once more";
+    }
+  }
+  cardStack.addEventListener("click", advanceCard);
+  btnPhotosContinue.addEventListener("click", next);
+
+  /* ---- Scene 5: letter ---- */
+  const envelope = document.getElementById("envelope");
+  const letterCard = document.getElementById("letter-card");
+  const envelopeHint = document.getElementById("envelope-hint");
+  const btnLetterContinue = document.getElementById("btn-letter-continue");
+
+  envelope.addEventListener("click", () => {
+    envelope.classList.add("opened");
+    envelopeHint.style.opacity = 0;
+    setTimeout(() => {
+      letterCard.classList.add("show");
+      btnLetterContinue.classList.add("show");
+    }, 350);
+  }, {once:true});
+  btnLetterContinue.addEventListener("click", next);
+
+  /* ---- Scene 6: gift ---- */
+  const giftWrap = document.getElementById("gift-wrap");
+  const giftHint = document.getElementById("gift-hint");
+  const btnGiftContinue = document.getElementById("btn-gift-continue");
+
+  giftWrap.addEventListener("click", () => {
+    giftWrap.classList.add("open");
+    giftHint.textContent = "🎉";
+    setTimeout(() => btnGiftContinue.classList.add("show"), 500);
+  }, {once:true});
+  btnGiftContinue.addEventListener("click", next);
+
+  /* ---- Scene 7: finale ---- */
+  function launchFinaleConfetti(){
+    if(!window.confetti) return;
+    const duration = 2200;
+    const end = Date.now() + duration;
+    (function frame(){
+      confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors: ["#8A2E36","#C9A34E","#F3D6D6"] });
+      confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors: ["#8A2E36","#C9A34E","#F3D6D6"] });
+      if(Date.now() < end) requestAnimationFrame(frame);
+    })();
+  }
+  document.getElementById("btn-replay").addEventListener("click", () => {
+    location.reload();
+  });
+
+})();
+</script>
+</body>
+</html>
